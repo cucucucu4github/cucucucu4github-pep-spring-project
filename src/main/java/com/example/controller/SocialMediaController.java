@@ -1,5 +1,22 @@
 package com.example.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
+
+import com.example.entity.Account;
+import com.example.entity.Message;
+import com.example.service.AccountService;
+import com.example.service.MessageService;
+
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * TODO: You will need to write your own endpoints and handlers for your controller using Spring. The endpoints you will need can be
@@ -7,6 +24,114 @@ package com.example.controller;
  * where applicable as well as the @ResponseBody and @PathVariable annotations. You should
  * refer to prior mini-project labs and lecture materials for guidance on how a controller may be built.
  */
-public class SocialMediaController {
+
+@RestController
+ public class SocialMediaController {
+
+    private AccountService accountService;
+    private MessageService messageService;
+
+    @Autowired
+    public SocialMediaController(AccountService accountService, MessageService messageService){
+        this.accountService = accountService;
+        this.messageService = messageService;
+    }
+
+    /**
+     * Handler to create new account.
+     * Success when username not empty and not exist, password length >= 4.
+     * If success, return account JSON with account id, with status code 200
+     * If account already exist, return 409.
+     * Otherwise, return 400.
+     * @param inputAccount repuest body, should contain username, password.
+     * @return ResponseEntity<Account>
+     */
+    @PostMapping(value="/register")
+    public ResponseEntity<Account> registerHandler(@RequestBody Account inputAccount){
+        return null;
+    }
+    /**
+     * Handler to check user login.
+     * Success when username exist, and password matches.
+     * If success, return account JSON with account id, with status code 200.
+     * Otherwise, return 401.
+     * @param inputAccount repuest body, should contain username, password.
+     * @return ResponseEntity<Account>
+     */
+    @PostMapping(value="/login")
+    public ResponseEntity<Account> loginHandler(@RequestBody Account inputAccount){
+        return null;
+    }
+
+    /**
+     * Handler to create new Message
+     * Success if messageText length > 0 and <= 255, and postedBy matches an exist account id.
+     * If success, return Message JSON with message id, with status 200.
+     * Otherwise status 400.
+     * @param message Request body, should contain message text and postedBy
+     * @return ResponseEntity<Message>
+     */
+    @PostMapping(value="/messages")
+    public ResponseEntity<Message> createMessageHandler(@RequestBody Message message){
+        return null;
+    }
+
+    /**
+     * Handler to query all messages.
+     * Return all messages, with status 200.
+     * @return ResponseEntity<List<Message>>
+     */
+    @GetMapping(value="/messages")
+    public ResponseEntity<List<Message>> queryAllMessageHandler(){
+        return null;
+    }
+
+    /**
+     * Handler to query a message by message id.
+     * If Message exist, return JSON message with status 200.
+     * Otherwise, return empty with status 200.
+     * @return ResponseEntity<Message>
+     */
+    @GetMapping(value="/messages/{messageId}")
+    public ResponseEntity<Message> queryMessageByIdHandler(){
+        return null;
+    }
+
+    /**
+     * Delete a message by message id.
+     * the request url should contain the message id.
+     * If message exist, delete the message and return the line number been infeccted (should be 1)
+     * Otherwise, return with number 0.
+     * @return ResponseEntity<Integer>
+     */
+    @DeleteMapping(value="/messages/{messageId}")
+    public ResponseEntity<Integer> deleteMessageByIdHandler(){
+        return null;
+    }
+
+    /**
+     * Update an exist message.
+     * The request url should contain message id.
+     * The request body should contain message text.
+     * If message id exist and message text length between 1 ~ 255, success.
+     * If success, update the database, return with number 1 (the records number been updated) with status 200.
+     * Otherwise, return 0 with status 400.
+     * @param InputMessage
+     * @return
+     */
+    @PatchMapping(value="/messages/{messageId}")
+    public ResponseEntity<Integer> updateMessageByIdHandler(@RequestBody Message InputMessage){
+        return null;
+    }
+
+    /**
+     * Query all messages by accoutn id.
+     * Always return with all messages queried with given id, with status 200.
+     * @return ResponseEntity<List<Message>> 
+     */
+    @GetMapping(value="/accounts/{accountId}/messages")
+    public ResponseEntity<List<Message>> queryAllMessagesByAccountIdHandler(){
+        return null;
+    }
 
 }
