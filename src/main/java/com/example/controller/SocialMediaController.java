@@ -1,5 +1,6 @@
 package com.example.controller;
 
+import org.apache.tomcat.jni.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,8 +13,10 @@ import org.springframework.http.HttpStatus;
 
 import com.example.entity.Account;
 import com.example.entity.Message;
+import com.example.exception.RegisterFailedException;
 import com.example.service.AccountService;
 import com.example.service.MessageService;
+import com.example.exception.*;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -48,7 +51,19 @@ import java.util.ArrayList;
      */
     @PostMapping(value="/register")
     public ResponseEntity<Account> registerHandler(@RequestBody Account inputAccount){
-        return null;
+        try {
+            Account account = this.accountService.registerService(inputAccount);
+            return ResponseEntity.status(200)
+                                 .body(account);
+        } catch (RegisterFailedException e) {
+            System.err.println("Register failed: " + e.getMessage());
+            return ResponseEntity.status(400)
+                                 .body(null);
+        } catch (UsernameAlreadyExistsException e){
+            System.err.println("Register failed: " + e.getMessage());
+            return ResponseEntity.status(409)
+                                 .body(null);
+        }
     }
     /**
      * Handler to check user login.
@@ -60,7 +75,15 @@ import java.util.ArrayList;
      */
     @PostMapping(value="/login")
     public ResponseEntity<Account> loginHandler(@RequestBody Account inputAccount){
-        return null;
+        try {
+            Account account = this.accountService.loginService(inputAccount);
+            return ResponseEntity.status(200)
+                                 .body(account);
+        } catch (LoginFailedException e) {
+            System.err.println("Login failed: " + e.getMessage());
+            return ResponseEntity.status(401)
+                                 .body(null);
+        }
     }
 
     /**
