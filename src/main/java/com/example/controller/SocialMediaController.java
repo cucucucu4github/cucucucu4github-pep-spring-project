@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
@@ -113,10 +114,11 @@ import java.util.ArrayList;
      * Handler to query a message by message id.
      * If Message exist, return JSON message with status 200.
      * Otherwise, return empty with status 200.
+     * @param messageId the ID of the message to be retrieved
      * @return ResponseEntity<Message>
      */
     @GetMapping(value="/messages/{messageId}")
-    public ResponseEntity<Message> queryMessageByIdHandler(){
+    public ResponseEntity<Message> queryMessageByIdHandler(@PathVariable String messageId){
         return null;
     }
 
@@ -125,10 +127,11 @@ import java.util.ArrayList;
      * the request url should contain the message id.
      * If message exist, delete the message and return the line number been infeccted (should be 1)
      * Otherwise, return with number 0.
+     * @param messageId the ID of the message to be deleted
      * @return ResponseEntity<Integer>
      */
     @DeleteMapping(value="/messages/{messageId}")
-    public ResponseEntity<Integer> deleteMessageByIdHandler(){
+    public ResponseEntity<Integer> deleteMessageByIdHandler(@PathVariable String messageId){
         return null;
     }
 
@@ -139,21 +142,23 @@ import java.util.ArrayList;
      * If message id exist and message text length between 1 ~ 255, success.
      * If success, update the database, return with number 1 (the records number been updated) with status 200.
      * Otherwise, return 0 with status 400.
-     * @param InputMessage
+     * @param messageId the ID of the message to be updated
+     * @param messageText the new message text
      * @return
      */
     @PatchMapping(value="/messages/{messageId}")
-    public ResponseEntity<Integer> updateMessageByIdHandler(@RequestBody Message InputMessage){
+    public ResponseEntity<Integer> updateMessageByIdHandler(@PathVariable String messageId, @RequestBody String messageText){
         return null;
     }
 
     /**
      * Query all messages by accoutn id.
      * Always return with all messages queried with given id, with status 200.
+     * @param accountId the ID of the account whose messages are to be retrieved
      * @return ResponseEntity<List<Message>> 
      */
     @GetMapping(value="/accounts/{accountId}/messages")
-    public ResponseEntity<List<Message>> queryAllMessagesByAccountIdHandler(){
+    public ResponseEntity<List<Message>> queryAllMessagesByAccountIdHandler(@PathVariable String accountId){
         return null;
     }
 
