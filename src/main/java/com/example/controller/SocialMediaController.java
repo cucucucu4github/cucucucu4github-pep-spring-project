@@ -96,8 +96,16 @@ import java.util.ArrayList;
      * @return ResponseEntity<Message>
      */
     @PostMapping(value="/messages")
-    public ResponseEntity<Message> createMessageHandler(@RequestBody Message message){
-        return null;
+    public ResponseEntity<Message> createMessageHandler(@RequestBody Message inputMessage){
+        try{
+            Message message = this.messageService.createMessage(inputMessage);
+            return ResponseEntity.status(200)
+                                 .body(message);
+        } catch(MessageCreationFailedException e) {
+            System.err.println("Message creation failed: " + e.getMessage());
+            return ResponseEntity.status(400)
+                                 .body(null);
+        }
     }
 
     /**
@@ -107,19 +115,27 @@ import java.util.ArrayList;
      */
     @GetMapping(value="/messages")
     public ResponseEntity<List<Message>> queryAllMessageHandler(){
-        return null;
+        return ResponseEntity.status(200).body(this.messageService.getAllMessages());
     }
 
     /**
      * Handler to query a message by message id.
      * If Message exist, return JSON message with status 200.
-     * Otherwise, return empty with status 200.
+     * Otherwise, return empty with status 400.
      * @param messageId the ID of the message to be retrieved
      * @return ResponseEntity<Message>
      */
     @GetMapping(value="/messages/{messageId}")
     public ResponseEntity<Message> queryMessageByIdHandler(@PathVariable String messageId){
-        return null;
+        try{
+            Message message = this.messageService.getMessageById(Integer.valueOf(messageId));
+            return ResponseEntity.status(200)
+                                 .body(message);
+        } catch(MessageIdNotExistsException e){
+            System.err.println("Message does not exist: " + e.getMessage());
+            return ResponseEntity.status(200)
+                                 .body(null);
+        }
     }
 
     /**
@@ -132,7 +148,10 @@ import java.util.ArrayList;
      */
     @DeleteMapping(value="/messages/{messageId}")
     public ResponseEntity<Integer> deleteMessageByIdHandler(@PathVariable String messageId){
-        return null;
+        int recordsDeleted = this.messageService.deleteMessageById(Integer.valueOf(messageId));
+        return recordsDeleted == 1? 
+            ResponseEntity.status(200).body(1) : ResponseEntity.status(200).body(null);
+                             
     }
 
     /**
@@ -148,7 +167,19 @@ import java.util.ArrayList;
      */
     @PatchMapping(value="/messages/{messageId}")
     public ResponseEntity<Integer> updateMessageByIdHandler(@PathVariable String messageId, @RequestBody String messageText){
-        return null;
+        try{
+            int recordsUpdated = this.messageService.updateMessageText(Integer.valueOf(messageId), messageText);
+            return ResponseEntity.status(200)
+                                 .body(1);
+        } catch(MessageIdNotExistsException e){
+            System.err.println("Message update failed: " + e.getMessage());
+            return ResponseEntity.status(400)
+                                 .body(null);
+        } catch(MessageTextException e) {
+            System.err.println("Message update failed: " + e.getMessage());
+            return ResponseEntity.status(400)
+                                 .body(null);
+        }
     }
 
     /**
@@ -159,7 +190,7 @@ import java.util.ArrayList;
      */
     @GetMapping(value="/accounts/{accountId}/messages")
     public ResponseEntity<List<Message>> queryAllMessagesByAccountIdHandler(@PathVariable String accountId){
-        return null;
+        return ResponseEntity.status(200).body(this.messageService.getAllMessagesByAccountId(Integer.valueOf(accountId)));
     }
 
 }
