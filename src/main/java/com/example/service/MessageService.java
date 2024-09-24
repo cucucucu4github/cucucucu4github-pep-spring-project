@@ -33,7 +33,16 @@ public class MessageService {
      * @throws MessageCreationFailedException
      */
     public Message createMessage(Message message) throws MessageCreationFailedException{
-        return null;
+        String messageText = message.getMessageText();
+        Long postedBy = (long) message.getPostedBy();
+        
+        if (messageText == null || messageText.length() < 1 || messageText.length() > 255)
+            throw new MessageCreationFailedException("Message text must be between 1 and 255 characters.");
+
+        if (!this.accountRepository.findById(postedBy).isPresent())
+            throw new MessageCreationFailedException("Message postedBy does not matach an existing account id.");
+        
+        return this.messageRepository.save(message);
     }
 
     /**
@@ -41,7 +50,7 @@ public class MessageService {
      * @return List<Message> contains all messages. Can be empty.
      */
     public List<Message> getAllMessages(){
-        return null;
+        return this.messageRepository.findAll();
     }
 
     /**
@@ -49,8 +58,12 @@ public class MessageService {
      * @param id, message id
      * @return Message queried. Null if id not exist.
      */
-    public Message getMessageById(int id){
-        return null;
+    public Message getMessageById(int id) throws MessageIdNotExistsException{
+        Optional<Message> optionMessage = this.messageRepository.findById((long) id);
+        if(!optionMessage.isPresent()){
+            throw new MessageIdNotExistsException("The message id does not exist.");
+        }
+        return optionMessage.get();
     }
 
     /**
@@ -60,8 +73,15 @@ public class MessageService {
      *  - 1 if deleted 1.
      *  - 0 if id not exist.
      */
-    public int deleteMessageById(int id){
-        return 0;
+    public int deleteMessageById(int id) {
+        Optional<Message> optionalMessage = this.messageRepository.findById((long) id);
+        
+        if (!optionalMessage.isPresent()) {
+            return 0;
+        } else {
+            this.messageRepository.deleteById((long) id);
+            return 1;
+        }
     }
 
     /**
@@ -72,8 +92,22 @@ public class MessageService {
      * @param messageText the new message text.
      * @return int, numbers of messages updated.
      */
-    public int updateMessageText(int id, String messageText){
-        return 1;
+    public int updateMessageText(int id, String messageText) throws MessageTextException, MessageIdNotExistsException {
+
+        if(messageText == null || messageText.length() < 1 || messageText.length() > 255) {
+            throw new MessageTextException("Message text not exist or empty or over 255 characters.");
+        }
+
+        Optional<Message> optionalMessage = this.messageRepository.findById((long) id);
+        
+        if (!optionalMessage.isPresent()) {
+            throw new MessageIdNotExistsException("The message id does not exist.");
+        } else {
+            Message message = optionalMessage.get();
+            message.setMessageText(messageText);
+            this.messageRepository.save(message);
+            return 1;
+        }
     }
 
     /**
@@ -82,6 +116,6 @@ public class MessageService {
      * @return List<Message> contains all messages by a spcecific account id. Could be empty.
      */
     public List<Message> getAllMessagesByAccountId(int accoundId){
-        return null;
+        return this.messageRepository.findByPostedBy(accoundId);
     }
 }
