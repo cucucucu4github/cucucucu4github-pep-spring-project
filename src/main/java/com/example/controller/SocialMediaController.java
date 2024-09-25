@@ -105,6 +105,9 @@ import java.util.ArrayList;
             System.err.println("Message creation failed: " + e.getMessage());
             return ResponseEntity.status(400)
                                  .body(null);
+        } catch (Exception e) {
+            System.err.println("Unexpected error: " + e.getMessage());
+            return ResponseEntity.status(400).body(null);
         }
     }
 
@@ -162,11 +165,14 @@ import java.util.ArrayList;
      * If success, update the database, return with number 1 (the records number been updated) with status 200.
      * Otherwise, return 0 with status 400.
      * @param messageId the ID of the message to be updated
-     * @param messageText the new message text
+     * @param inputMessage request body should only contain message text
      * @return
      */
     @PatchMapping(value="/messages/{messageId}")
-    public ResponseEntity<Integer> updateMessageByIdHandler(@PathVariable String messageId, @RequestBody String messageText){
+    public ResponseEntity<Integer> updateMessageByIdHandler(@PathVariable String messageId, @RequestBody Message inputMessage){
+
+        String messageText = inputMessage.getMessageText();
+
         try{
             int recordsUpdated = this.messageService.updateMessageText(Integer.valueOf(messageId), messageText);
             return ResponseEntity.status(200)

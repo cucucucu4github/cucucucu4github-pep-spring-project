@@ -34,7 +34,7 @@ public class MessageService {
      */
     public Message createMessage(Message message) throws MessageCreationFailedException{
         String messageText = message.getMessageText();
-        Long postedBy = (long) message.getPostedBy();
+        Integer postedBy = message.getPostedBy();
         
         if (messageText == null || messageText.length() < 1 || messageText.length() > 255)
             throw new MessageCreationFailedException("Message text must be between 1 and 255 characters.");
@@ -59,7 +59,7 @@ public class MessageService {
      * @return Message queried. Null if id not exist.
      */
     public Message getMessageById(int id) throws MessageIdNotExistsException{
-        Optional<Message> optionMessage = this.messageRepository.findById((long) id);
+        Optional<Message> optionMessage = this.messageRepository.findById(id);
         if(!optionMessage.isPresent()){
             throw new MessageIdNotExistsException("The message id does not exist.");
         }
@@ -74,12 +74,12 @@ public class MessageService {
      *  - 0 if id not exist.
      */
     public int deleteMessageById(int id) {
-        Optional<Message> optionalMessage = this.messageRepository.findById((long) id);
+        Optional<Message> optionalMessage = this.messageRepository.findById(id);
         
         if (!optionalMessage.isPresent()) {
             return 0;
         } else {
-            this.messageRepository.deleteById((long) id);
+            this.messageRepository.deleteById(id);
             return 1;
         }
     }
@@ -93,12 +93,12 @@ public class MessageService {
      * @return int, numbers of messages updated.
      */
     public int updateMessageText(int id, String messageText) throws MessageTextException, MessageIdNotExistsException {
-
-        if(messageText == null || messageText.length() < 1 || messageText.length() > 255) {
+        
+        if(messageText == null || messageText.length() < 1 || messageText.length() > 255 || messageText.equals("")) {
             throw new MessageTextException("Message text not exist or empty or over 255 characters.");
         }
 
-        Optional<Message> optionalMessage = this.messageRepository.findById((long) id);
+        Optional<Message> optionalMessage = this.messageRepository.findById(id);
         
         if (!optionalMessage.isPresent()) {
             throw new MessageIdNotExistsException("The message id does not exist.");
